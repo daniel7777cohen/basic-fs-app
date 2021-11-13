@@ -1,20 +1,22 @@
 import './App.css';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import Homepage from './routes/Homepage';
 import TransactionRouter from './routes/TransactionsRouter';
 import Layout from './components/Layout/Layout';
+import NavBar from './components/NavBar/NavBar';
 
 const App = () => {
   return (
-    <Layout>
+    <>
       <Router>
-        <Switch>
-          <Route exact path="/" component={Homepage} />
-          <Route path="/transactions" component={TransactionRouter} />
-          <Redirect from="*" to="/" />
-        </Switch>
+        <NavBar />
+        <Layout>
+          <Switch>
+            <Route path="/transactions" component={TransactionRouter} />
+            <Redirect from="*" to="/" />
+          </Switch>
+        </Layout>
       </Router>
-    </Layout>
+    </>
   );
 };
 
