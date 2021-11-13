@@ -12,6 +12,7 @@ export const EditableCell = ({
   updateMyData: (rowIndex: number, columnId: number, value: string | number) => void;
 }) => {
   const [value, setValue] = useState(initialValue);
+
   const onChange = (e: any) => {
     setValue(e.target.value);
   };
@@ -24,5 +25,5 @@ export const EditableCell = ({
     setValue(initialValue);
   }, [initialValue]);
 
-  return <input data-tip={value} value={value} onChange={onChange} onBlur={onBlur} />;
+  return <input value={value} onChange={onChange} onBlur={onBlur} />;
 };

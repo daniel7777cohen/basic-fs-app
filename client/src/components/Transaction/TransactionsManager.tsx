@@ -1,7 +1,9 @@
 import styled from 'styled-components';
 import { mockData } from '../../mock';
-import TransactionsTable from './table/TableManager';
+import TableManager from './table/TableManager';
 import { translateTrsResponse } from '../utils/transaction-table';
+import { useEffect, useState } from 'react';
+import { TransactionFormatted } from '../utils/types';
 
 const Container = styled.div`
   display: flex;
@@ -13,9 +15,21 @@ const Container = styled.div`
 `;
 
 const TransactionsManager = () => {
+  const [transactions, setTransactions] = useState<TransactionFormatted[]>([]);
+
+  const handleDelete = (newData: TransactionFormatted[]) => {
+    setTransactions(newData);
+  };
+
+  useEffect(() => {
+    setTransactions(translateTrsResponse(mockData));
+  }, []);
+
+  const hasTransactions = transactions.length > 0;
+
   return (
     <Container>
-      <TransactionsTable transactionsFormatted={translateTrsResponse(mockData)} />
+      {hasTransactions && <TableManager handleDelete={handleDelete} transactionsFormatted={transactions} />}
     </Container>
   );
 };

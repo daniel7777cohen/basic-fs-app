@@ -22,4 +22,5 @@ export interface TransactionFormatted {
   totalPrice: string;
   creditCardType: string;
   creditCardNumber: string;
+  isSelected: boolean;
 }
