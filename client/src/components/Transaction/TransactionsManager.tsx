@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { mockData } from '../mock';
-import TransactionsTable from '../components/Transaction/table/TableManager';
-import { translateTrsResponse } from '../components/utils/transaction-table';
+import { mockData } from '../../mock';
+import TransactionsTable from './table/TableManager';
+import { translateTrsResponse } from '../utils/transaction-table';
 
 const Container = styled.div`
   display: flex;

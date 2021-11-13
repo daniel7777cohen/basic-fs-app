@@ -1,6 +1,6 @@
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import TransactionCreate from '../components/Transaction/create/TransactionCreate';
-import TransactionsManager from '../pages/TransactionsManager';
+import TransactionsManager from '../components/Transaction/TransactionsManager';
 
 const TransactionRouter = () => {
   const routeMatch = useRouteMatch();

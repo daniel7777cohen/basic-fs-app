@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
-import Homepage from './pages/Homepage';
+import Homepage from './routes/Homepage';
 import TransactionRouter from './routes/TransactionsRouter';
 import Layout from './components/Layout/Layout';
 
