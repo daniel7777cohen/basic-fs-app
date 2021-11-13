@@ -12,7 +12,7 @@ const App = () => {
         <Layout>
           <Switch>
             <Route path="/transactions" component={TransactionRouter} />
-            <Redirect from="*" to="/" />
+            <Redirect from="*" to="/transactions" />
           </Switch>
         </Layout>
       </Router>
