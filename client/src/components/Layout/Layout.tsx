@@ -7,6 +7,8 @@ interface Props {
 }
 
 const Wrapper = styled.div`
+  display: flex;
+  justify-content: center;
   background-color: ${colors.layout};
   height: 100%;
 `;
