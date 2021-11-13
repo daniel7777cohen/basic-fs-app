@@ -16,6 +16,10 @@ export const ColumnsProps = () => {
         accessor: 'address',
       },
       {
+        Header: 'Total Price',
+        accessor: 'totalPrice',
+      },
+      {
         Header: 'Currency',
         accessor: 'currency',
       },

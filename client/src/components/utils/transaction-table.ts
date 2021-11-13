@@ -13,6 +13,7 @@ export function translateTrsResponse(transactionsResponse: TransactionResponse[]
       currency: trs.currency,
       creditCardType: trs.cerdit_card_type,
       creditCardNumber: trs.cerdit_card_number,
+      totalPrice: trs.total_price,
     };
   });
 }

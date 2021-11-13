@@ -19,6 +19,7 @@ export interface TransactionFormatted {
   email: string;
   address: string;
   currency: string;
+  totalPrice: string;
   creditCardType: string;
   creditCardNumber: string;
 }
