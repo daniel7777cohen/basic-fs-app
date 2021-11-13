@@ -15,7 +15,6 @@ const Container = styled.div`
 const TransactionsManager = () => {
   return (
     <Container>
-      Transactions
       <TransactionsTable transactionsFormatted={translateTrsResponse(mockData)} />
     </Container>
   );
