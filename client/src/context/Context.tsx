@@ -1,12 +1,13 @@
 import { createContext, useEffect, useState } from 'react';
 import { TransactionResponse, TransactionTableData } from '../common/types';
-import { mockData } from '../mock';
+import { getMockExtraData } from '../mock';
 
 export type ContextType = {
   transactions: TransactionResponse[];
   setTransactions: React.Dispatch<React.SetStateAction<TransactionResponse[]>>;
   updateTrs: (editedRow: TransactionTableData) => Promise<void>;
-  deleteTrs: (rowsToDeleteParams: { customer_id: string; transaction_id: string | undefined }[]) => void;
+  deleteTrs: (rowsToDeleteParams: { customer_id: string; transaction_id: string }[]) => void;
+  addTrs: (addedTrs: TransactionResponse) => Promise<void>;
 };
 
 const defaultState = {
@@ -14,6 +15,7 @@ const defaultState = {
   setTransactions: () => {},
   updateTrs: async () => {},
   deleteTrs: async () => {},
+  addTrs: async () => {},
 };
 
 export const TransactionsContext = createContext<ContextType>(defaultState);
@@ -22,10 +24,10 @@ const TransactionsProvider = ({ children }: { children: any }) => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
 
   const deleteTrs = async (
-    rowsToDeleteParams: { customer_id: string; transaction_id: string | undefined }[]
+    rowsToDeleteParams: { customer_id: string; transaction_id: string }[]
   ) => {
-    const rowsToDeleteIds = rowsToDeleteParams.map((row) => row.customer_id);
-    const newTransactions = transactions.filter((trs) => !rowsToDeleteIds.includes(trs.customer_id));
+    const rowsToDeleteIds = rowsToDeleteParams.map((row) => row.transaction_id);
+    const newTransactions = transactions.filter((trs) => !rowsToDeleteIds.includes(trs.transaction_id));
     setTransactions(newTransactions);
   };
 
@@ -43,15 +45,21 @@ const TransactionsProvider = ({ children }: { children: any }) => {
     setTransactions(newTransactions);
   };
 
+  const addTrs = async (addedTrs: TransactionResponse) => {
+    const newTransactions = [...transactions, addedTrs];
+    setTransactions(newTransactions);
+  };
+
   const useTransactions = {
     transactions,
     setTransactions,
     updateTrs,
     deleteTrs,
+    addTrs,
   };
 
   useEffect(() => {
-    setTransactions(mockData);
+    setTransactions(getMockExtraData());
   }, []);
   return <TransactionsContext.Provider value={useTransactions}>{children}</TransactionsContext.Provider>;
 };

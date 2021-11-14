@@ -1,4 +1,14 @@
-export const mockData = [
+export const getMockExtraData = ()=>{
+  let counter = 0;
+  return mockData.map((data)=>{
+    return {
+      ...data,
+      transaction_id: JSON.stringify(counter++),
+    }
+  })
+}
+
+ const mockData = [
   {
     customer_id: '813-86-3131',
     first_name: 'Benedikt',

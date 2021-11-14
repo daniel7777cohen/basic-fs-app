@@ -12,7 +12,7 @@ export interface TransactionResponse {
   currency: string;
   credit_card_type: string;
   credit_card_number: string;
-  transaction_id?: string;
+  transaction_id: string;
 }
 
 export interface TransactionTableData extends TransactionResponse {

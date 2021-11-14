@@ -11,7 +11,7 @@ export function translateTrsResponse(transactionsResponse: TransactionResponse[]
         trs.city
       )} ${capitalizeFirstLetter(trs.street)}`,
       isSelected: false,
-      transaction_id: '1',
+      transaction_id: trs.transaction_id,
       
     };
   });

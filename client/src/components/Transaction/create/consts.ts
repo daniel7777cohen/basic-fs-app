@@ -104,3 +104,12 @@ export const Currencies = [
   'TND',
   'TTD',
 ];
+
+export const formDataInitialState = {
+  currency: 'Select Currency',
+  total_price: '0',
+  credit_card_type: 'Select Credit Card Type',
+  credit_card_number: '',
+  first_name: 'Select User',
+  last_name: '',
+};
