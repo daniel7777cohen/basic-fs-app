@@ -8,8 +8,26 @@ const NavBar = () => {
     history.push(path);
   };
 
+  const getDefaultSelectedKey = () => {
+    const currentPathArray = history.location.pathname.split('/');
+    const currnePath = currentPathArray[currentPathArray.length - 1];
+
+    switch (currnePath) {
+      case 'transactions':
+        return ['1'];
+      case 'create':
+        return ['2'];
+      default:
+        return ['1'];
+    }
+  };
+
   return (
-    <Menu style={{ width: '100%',overflow:'hidden' }} defaultSelectedKeys={['1']} mode="horizontal">
+    <Menu
+      style={{ width: '100%', overflow: 'hidden' }}
+      defaultSelectedKeys={getDefaultSelectedKey()}
+      mode="horizontal"
+    >
       <Menu.Item onClick={() => redirectTo('/transactions')} key="1">
         VIEW{' '}
       </Menu.Item>
