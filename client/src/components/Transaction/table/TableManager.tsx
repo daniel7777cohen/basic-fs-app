@@ -1,27 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { TransactionFormatted } from '../../utils/types';
+import React, { useContext, useEffect, useState } from 'react';
+import { TransactionTableData } from '../../utils/types';
 import { TableDisplay } from './TableDisplay';
-import { ColumnsProps } from './Columns';
+import { ColumnsProps } from './ColumnsProps';
 import { Container } from './Styles';
 import { Button } from 'antd';
 import { DeleteFilled } from '@ant-design/icons';
+import { TransactionsContext } from '../../../context/Context';
 
-const TableManager = ({
-  transactionsFormatted,
-  handleDelete,
-}: {
-  transactionsFormatted: TransactionFormatted[];
-  handleDelete: (rowsToDeleteParams: { customerId: string; transactionId: string }[]) => void;
-}) => {
-  const [data, setData] = useState<TransactionFormatted[]>(transactionsFormatted);
+const TableManager = ({ transactionsFormatted }: { transactionsFormatted: TransactionTableData[] }) => {
+  const [data, setData] = useState<TransactionTableData[]>(transactionsFormatted);
   const [originalData] = useState(transactionsFormatted);
   const [skipPageReset, setSkipPageReset] = useState(false);
 
+  const { deleteTrs, updateTrs } = useContext(TransactionsContext);
+
   const updateMyData = (rowIndex: number, columnId: any, value: string | number | boolean) => {
     setSkipPageReset(true);
-    setData((old: TransactionFormatted[]) =>
-      old.map((row: TransactionFormatted, index: number) => {
+    const editedRow = { ...data[rowIndex], [columnId]: value };
+    updateTrs(editedRow);
+  };
+
+  const onCheckboxClick = (rowIndex: number, columnId: any, value: string | number | boolean) => {
+    setSkipPageReset(true);
+    setData((old: TransactionTableData[]) =>
+      old.map((row: TransactionTableData, index: number) => {
         if (index === rowIndex) {
+          debugger;
           return {
             ...old[rowIndex],
             [columnId]: value,
@@ -43,28 +47,31 @@ const TableManager = ({
   const onDeleteClick = () => {
     const rowsToDeleteParams = data
       .filter((row) => row.isSelected)
-      .map(({ customerId, transactionId }) => {
-        return { customerId, transactionId };
+      .map(({ customer_id, transaction_id }) => {
+        return { customer_id, transaction_id };
       });
-    handleDelete(rowsToDeleteParams);
+    deleteTrs(rowsToDeleteParams);
   };
 
   const resetData = () => setData(originalData);
 
   return (
-    <Container>
+    <div>
       <span>{`Transactions(${data.length})`}</span>
       <Button style={{ marginRight: '20px', marginLeft: '20px' }} onClick={resetData}>
         Reset Data
       </Button>
       <DeleteFilled onClick={onDeleteClick} />
-      <TableDisplay
-        columns={ColumnsProps(updateMyData)}
-        data={data}
-        updateMyData={updateMyData}
-        skipPageReset={skipPageReset}
-      />
-    </Container>
+      <Container>
+        <TableDisplay
+          columns={ColumnsProps(onCheckboxClick)}
+          data={data}
+          updateMyData={updateMyData}
+          onCheckboxClick={onCheckboxClick}
+          skipPageReset={skipPageReset}
+        />
+      </Container>
+    </div>
   );
 };
 

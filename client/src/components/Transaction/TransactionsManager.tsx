@@ -14,11 +14,7 @@ const Container = styled.div`
 `;
 
 const TransactionsManager = () => {
-  const { deleteTrs, transactions } = useContext(TransactionsContext);
-
-  const handleDelete = (rowsToDeleteParams: { customerId: string; transactionId: string }[]) => {
-    deleteTrs(rowsToDeleteParams);
-  };
+  const { transactions } = useContext(TransactionsContext);
 
   const hasTransactions = transactions?.length > 0;
 
@@ -26,7 +22,6 @@ const TransactionsManager = () => {
     <Container>
       {hasTransactions && (
         <TableManager
-          handleDelete={handleDelete}
           transactionsFormatted={translateTrsResponse(transactions)}
         />
       )}

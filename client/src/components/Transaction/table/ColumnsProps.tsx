@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 export const ColumnsProps = (
-  updateMyData: (rowIndex: number, columnId: any, value: string | number | boolean) => void
+  onCheckboxClick: (rowIndex: number, columnId: any, value: string | number | boolean) => void
 ) => {
   return useMemo(
     () => [
@@ -12,7 +12,7 @@ export const ColumnsProps = (
           return (
             <input
               onChange={(e) => {
-                updateMyData(row.index, 'isSelected', e.target.checked);
+                onCheckboxClick(row.index, 'isSelected', e.target.checked);
               }}
               type="checkbox"
               checked={row.original.isSelected}
@@ -21,8 +21,12 @@ export const ColumnsProps = (
         },
       },
       {
-        Header: 'Name',
-        accessor: 'name',
+        Header: 'First Name',
+        accessor: 'first_name',
+      },
+      {
+        Header: 'Last Name',
+        accessor: 'last_name',
       },
       {
         Header: 'Email',
@@ -34,7 +38,7 @@ export const ColumnsProps = (
       },
       {
         Header: 'Total Price',
-        accessor: 'totalPrice',
+        accessor: 'total_price',
       },
       {
         Header: 'Currency',
@@ -42,13 +46,13 @@ export const ColumnsProps = (
       },
       {
         Header: 'Credit Card Type',
-        accessor: 'creditCardType',
+        accessor: 'credit_card_type',
       },
       {
         Header: 'Credit Card Number',
-        accessor: 'creditCardNumber',
+        accessor: 'credit_card_number',
       },
     ],
-    []
+    [onCheckboxClick]
   );
 };

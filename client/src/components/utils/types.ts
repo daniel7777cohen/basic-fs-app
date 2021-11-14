@@ -10,19 +10,11 @@ export interface TransactionResponse {
   phone: string;
   total_price: string;
   currency: string;
-  cerdit_card_type: string;
-  cerdit_card_number: string;
+  credit_card_type: string;
+  credit_card_number: string;
+  transaction_id?: string;
 }
 
-export interface TransactionFormatted {
-  name: string;
-  email: string;
-  address: string;
-  currency: string;
-  totalPrice: string;
-  creditCardType: string;
-  creditCardNumber: string;
+export interface TransactionTableData extends TransactionResponse {
   isSelected: boolean;
-  transactionId: string;
-  customerId: string;
 }

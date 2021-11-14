@@ -2,10 +2,16 @@ import styled from 'styled-components';
 import { colors } from '../../../common/styles/colors';
 
 export const Container = styled.div`
+  max-width: 1600px;
+
+  @media screen and (max-width: 1500px) {
+    max-width: 1375px;
+  }
+
+  overflow: scroll;
   table {
     background-color: ${colors.white};
     border: 1px solid black;
-    min-width: 1200px;
     tr {
       :last-child {
         td {

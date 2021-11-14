@@ -9,7 +9,7 @@ const NavBar = () => {
   };
 
   return (
-    <Menu style={{ width: '100%' }} defaultSelectedKeys={['1']} mode="horizontal">
+    <Menu style={{ width: '100%',overflow:'hidden' }} defaultSelectedKeys={['1']} mode="horizontal">
       <Menu.Item onClick={() => redirectTo('/transactions')} key="1">
         VIEW{' '}
       </Menu.Item>

@@ -1,5 +1,5 @@
 import { useTable, usePagination, Column } from 'react-table';
-import { TransactionFormatted } from '../../utils/types';
+import { TransactionTableData } from '../../utils/types';
 import { EditableCell } from './EditableCell';
 
 const defaultColumn = {
@@ -11,9 +11,11 @@ export const TableDisplay = ({
   data,
   updateMyData,
   skipPageReset,
+  onCheckboxClick
 }: {
   columns: Column[];
-  data: TransactionFormatted[];
+  data: TransactionTableData[];
+  onCheckboxClick:any
   updateMyData: any;
   skipPageReset: any;
 }) => {
