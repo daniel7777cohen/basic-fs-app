@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { transactionRouter } from './routes/transaction/transactionRoute';
 import { customerRouter } from './routes/customer/customerRoute';
+import { connectDB } from './db';
 
 dotenv.config();
 
@@ -19,4 +20,5 @@ app.use('/api/customer', customerRouter);
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
+  connectDB();
 });
