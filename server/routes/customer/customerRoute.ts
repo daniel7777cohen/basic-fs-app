@@ -6,6 +6,6 @@ customerRouter.get('/', ()=>{}, async (req, res) => {});
 
 customerRouter.post('/', ()=>{}, async (req, res) => {});
 
-customerRouter.put('/:transaction_id', ()=>{}, async (req, res) => {});
+customerRouter.put('/:customer_id', ()=>{}, async (req, res) => {});
 
-customerRouter.delete('/:transaction_id', ()=>{}, async (req, res) => {});
+customerRouter.delete('/:customer_id', ()=>{}, async (req, res) => {});
