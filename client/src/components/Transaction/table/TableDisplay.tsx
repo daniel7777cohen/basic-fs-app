@@ -1,5 +1,5 @@
 import { useTable, usePagination, Column } from 'react-table';
-import { TransactionTableData } from '../../utils/types';
+import { TransactionTableData } from '../../../common/types';
 import { EditableCell } from './EditableCell';
 
 const defaultColumn = {

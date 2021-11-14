@@ -30,6 +30,13 @@ export const Container = styled.div`
       :last-child {
         border-right: 0;
       }
+      :nth-child(5) {
+        pointer-events: none;
+        //Todo: allow address editing
+      }
+      :nth-child(9) {
+        pointer-events: none;
+      }
 
       input {
         font-size: 1rem;

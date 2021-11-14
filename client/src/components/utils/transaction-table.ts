@@ -1,5 +1,5 @@
 import { capitalizeFirstLetter } from '../../common/utils';
-import { TransactionTableData, TransactionResponse } from './types';
+import { TransactionTableData, TransactionResponse } from '../../common/types';
 
 export function translateTrsResponse(transactionsResponse: TransactionResponse[]): TransactionTableData[] {
   return transactionsResponse.map((trs: TransactionResponse) => {

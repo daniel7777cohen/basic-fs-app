@@ -15,14 +15,13 @@ const Container = styled.div`
 
 const TransactionsManager = () => {
   const { transactions } = useContext(TransactionsContext);
-
   const hasTransactions = transactions?.length > 0;
 
   return (
     <Container>
       {hasTransactions && (
         <TableManager
-          transactionsFormatted={translateTrsResponse(transactions)}
+          transactionTableData={translateTrsResponse(transactions)}
         />
       )}
     </Container>

@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { TransactionTableData } from '../../utils/types';
 import { TableDisplay } from './TableDisplay';
 import { ColumnsProps } from './ColumnsProps';
 import { Container } from './Styles';
 import { Button } from 'antd';
 import { DeleteFilled } from '@ant-design/icons';
 import { TransactionsContext } from '../../../context/Context';
+import { TransactionTableData } from '../../../common/types';
 
-const TableManager = ({ transactionsFormatted }: { transactionsFormatted: TransactionTableData[] }) => {
-  const [data, setData] = useState<TransactionTableData[]>(transactionsFormatted);
-  const [originalData] = useState(transactionsFormatted);
+const TableManager = ({ transactionTableData }: { transactionTableData: TransactionTableData[] }) => {
+  const [data, setData] = useState<TransactionTableData[]>(transactionTableData);
+  const [originalData] = useState(transactionTableData);
   const [skipPageReset, setSkipPageReset] = useState(false);
 
   const { deleteTrs, updateTrs } = useContext(TransactionsContext);
@@ -25,7 +25,6 @@ const TableManager = ({ transactionsFormatted }: { transactionsFormatted: Transa
     setData((old: TransactionTableData[]) =>
       old.map((row: TransactionTableData, index: number) => {
         if (index === rowIndex) {
-          debugger;
           return {
             ...old[rowIndex],
             [columnId]: value,
@@ -41,8 +40,8 @@ const TableManager = ({ transactionsFormatted }: { transactionsFormatted: Transa
   }, [data]);
 
   useEffect(() => {
-    setData(transactionsFormatted);
-  }, [transactionsFormatted]);
+    setData(transactionTableData);
+  }, [transactionTableData]);
 
   const onDeleteClick = () => {
     const rowsToDeleteParams = data

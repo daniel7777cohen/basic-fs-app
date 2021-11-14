@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { TransactionTableData, TransactionResponse } from '../components/utils/types';
+import { TransactionResponse, TransactionTableData } from '../common/types';
 import { mockData } from '../mock';
 
 export type ContextType = {
@@ -34,10 +34,12 @@ const TransactionsProvider = ({ children }: { children: any }) => {
     const transactionToEditIndex = newTransactions.findIndex(
       (trs) => trs.customer_id === editedRow.customer_id
     );
+
     if (transactionToEditIndex !== -1) {
       const { isSelected, ...rest } = editedRow;
       newTransactions[transactionToEditIndex] = rest;
     }
+
     setTransactions(newTransactions);
   };
 
