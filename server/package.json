@@ -2,19 +2,27 @@
   "name": "chback",
   "version": "1.0.0",
   "description": "",
-  "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "nodemon server.ts"
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node .",
+    "server": "nodemon server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "main": "dist/server.ts",
   "author": "Daniel Cohen",
   "license": "ISC",
   "dependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.11.7",
     "axios": "^0.24.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "mongoose": "^6.0.12",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "tslint": "^6.1.3"
   }
 }
