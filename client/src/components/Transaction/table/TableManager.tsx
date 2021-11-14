@@ -11,7 +11,7 @@ const TableManager = ({
   handleDelete,
 }: {
   transactionsFormatted: TransactionFormatted[];
-  handleDelete: (newData: TransactionFormatted[]) => void;
+  handleDelete: (rowsToDeleteParams: { customerId: string; transactionId: string }[]) => void;
 }) => {
   const [data, setData] = useState<TransactionFormatted[]>(transactionsFormatted);
   const [originalData] = useState(transactionsFormatted);
@@ -41,9 +41,14 @@ const TableManager = ({
   }, [transactionsFormatted]);
 
   const onDeleteClick = () => {
-    const newData = data.filter((row) => !row.isSelected);
-    handleDelete(newData);
+    const rowsToDeleteParams = data
+      .filter((row) => row.isSelected)
+      .map(({ customerId, transactionId }) => {
+        return { customerId, transactionId };
+      });
+    handleDelete(rowsToDeleteParams);
   };
+
   const resetData = () => setData(originalData);
 
   return (

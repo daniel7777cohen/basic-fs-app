@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import { mockData } from '../../mock';
 import TableManager from './table/TableManager';
 import { translateTrsResponse } from '../utils/transaction-table';
-import { useEffect, useState } from 'react';
-import { TransactionFormatted } from '../utils/types';
+import { useContext } from 'react';
+import { TransactionsContext } from '../../context/Context';
 
 const Container = styled.div`
   display: flex;
@@ -15,21 +14,22 @@ const Container = styled.div`
 `;
 
 const TransactionsManager = () => {
-  const [transactions, setTransactions] = useState<TransactionFormatted[]>([]);
+  const { deleteTrs, transactions } = useContext(TransactionsContext);
 
-  const handleDelete = (newData: TransactionFormatted[]) => {
-    setTransactions(newData);
+  const handleDelete = (rowsToDeleteParams: { customerId: string; transactionId: string }[]) => {
+    deleteTrs(rowsToDeleteParams);
   };
 
-  useEffect(() => {
-    setTransactions(translateTrsResponse(mockData));
-  }, []);
-
-  const hasTransactions = transactions.length > 0;
+  const hasTransactions = transactions?.length > 0;
 
   return (
     <Container>
-      {hasTransactions && <TableManager handleDelete={handleDelete} transactionsFormatted={transactions} />}
+      {hasTransactions && (
+        <TableManager
+          handleDelete={handleDelete}
+          transactionsFormatted={translateTrsResponse(transactions)}
+        />
+      )}
     </Container>
   );
 };

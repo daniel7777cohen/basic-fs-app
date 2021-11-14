@@ -15,6 +15,8 @@ export function translateTrsResponse(transactionsResponse: TransactionResponse[]
       creditCardNumber: trs.cerdit_card_number,
       totalPrice: trs.total_price,
       isSelected: false,
+      transactionId: '1',
+      customer_id: trs.customer_id,
     };
   });
 }

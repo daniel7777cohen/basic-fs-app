@@ -23,4 +23,6 @@ export interface TransactionFormatted {
   creditCardType: string;
   creditCardNumber: string;
   isSelected: boolean;
+  transactionId: string;
+  customerId: string;
 }
