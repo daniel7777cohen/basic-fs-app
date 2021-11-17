@@ -16,7 +16,20 @@ export const ColumnsProps = (
               }}
               type="checkbox"
               checked={row.original.isSelected}
+              disabled={row.original.is_deleted}
             />
+          );
+        },
+      },
+      {
+        Header: 'Status',
+        accessor: 'is_deleted',
+        Cell: ({ row }: { row: any }) => {
+          return (
+            <span style={{ pointerEvents: row.original.is_deleted ? 'none' : 'unset' }}>
+              {' '}
+              {row.original.is_deleted ? 'deleted' : 'active'}
+            </span>
           );
         },
       },
@@ -53,6 +66,7 @@ export const ColumnsProps = (
         accessor: 'credit_card_number',
       },
     ],
+
     [onCheckboxClick]
   );
 };

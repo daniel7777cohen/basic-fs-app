@@ -5,7 +5,6 @@ import { CreditCardTypes, Currencies, formDataInitialState } from './consts';
 import { Button } from 'antd';
 import { Container, Form } from './Styles';
 import { TransactionsContext } from '../../../context/Context';
-import { useHistory } from 'react-router';
 
 const { Option } = Select;
 
@@ -36,7 +35,7 @@ const TransactionCreate = () => {
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    addTrs({ ...transactions[0], ...formData, transaction_id: JSON.stringify(transactions.length + 1) });
+    // addTrs({ ...transactions[0], ...formData, transaction_id: JSON.stringify(transactions.length + 1) });
     setFormData(formDataInitialState);
   };
 

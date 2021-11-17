@@ -1,5 +1,10 @@
+export enum Gender {
+  Male = 'male',
+  Female = 'female',
+}
+
 export interface Customer {
-  customer_id: string;
+  _id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -11,17 +16,16 @@ export interface Customer {
 }
 
 export interface Transaction {
-  transaction_id: string;
-  createdAt: string;
+  _id: string;
+  createdAt: Date;
   total_price: number;
   currency: string;
   credit_card_type: string;
   credit_card_number: number;
   is_deleted: boolean;
+  __v: number;
 }
 
-export type Fetched_Transaction = Transaction & Customer;
-
-export interface TransactionTableData extends Fetched_Transaction {
-  isSelected: boolean;
+export interface TransactionsDbResponse extends Transaction {
+  customer_id: Customer;
 }

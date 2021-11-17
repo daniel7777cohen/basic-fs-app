@@ -1,8 +1,8 @@
 import { capitalizeFirstLetter } from '../../common/utils';
-import { TransactionTableData, TransactionResponse } from '../../common/types';
+import { Fetched_Transaction, TransactionTableData } from '../../common/types';
 
-export function translateTrsResponse(transactionsResponse: TransactionResponse[]): TransactionTableData[] {
-  return transactionsResponse.map((trs: TransactionResponse) => {
+export function translateTrsResponse(transactionsResponse: Fetched_Transaction[]): TransactionTableData[] {
+  return transactionsResponse.map((trs: Fetched_Transaction) => {
     return {
       ...trs,
       first_name: `${capitalizeFirstLetter(trs.first_name)}`,
@@ -11,8 +11,6 @@ export function translateTrsResponse(transactionsResponse: TransactionResponse[]
         trs.city
       )} ${capitalizeFirstLetter(trs.street)}`,
       isSelected: false,
-      transaction_id: trs.transaction_id,
-      
     };
   });
 }

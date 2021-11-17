@@ -17,7 +17,7 @@ customerRouter.post('/', async (req, res) => {
 
     res.status(200).send(customer);
   } catch (error) {
-    res.status(400).send(error.message);
+    res.status(500).send(error.message);
   }
 });
 

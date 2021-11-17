@@ -19,13 +19,19 @@ const TransactionSchema = new mongoose.Schema({
     type: String, //should be an enum as in ui
     required: true,
   },
-  credit_card_type: {//  enum
+  credit_card_type: {
+    //  enum
     type: String,
     required: true,
   },
-  credit_card_number: {//validation for proper number
+  credit_card_number: {
+    //validation for proper number
     type: Number,
     required: true,
+  },
+  is_deleted: {
+    type: Boolean,
+    default: false,
   },
 });
 

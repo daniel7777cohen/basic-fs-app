@@ -2,13 +2,15 @@ import styled from 'styled-components';
 import { colors } from '../../../common/styles/colors';
 
 export const Container = styled.div`
-  max-width: 1600px;
+  max-width: 1650px;
+  margin-top: 20px;
 
   @media screen and (max-width: 1500px) {
     max-width: 1375px;
   }
 
   overflow: scroll;
+  box-shadow: 0px 3px 15px 8px rgb(0 0 0 / 50%);
   table {
     background-color: ${colors.white};
     border: 1px solid black;
@@ -26,14 +28,12 @@ export const Container = styled.div`
       padding: 0.5rem;
       border-bottom: 1px solid black;
       border-right: 1px solid black;
+      max-width: 200px;
 
       :last-child {
         border-right: 0;
       }
-      :nth-child(5) {
-        pointer-events: none;
-        //Todo: allow address editing
-      }
+
       :nth-child(9) {
         pointer-events: none;
       }
@@ -43,6 +43,8 @@ export const Container = styled.div`
         padding: 0;
         margin: 0;
         border: 0;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
     }
   }

@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import transactionRouter from './routes/transaction/transactionRoute';
 import customerRouter from './routes/customer/customerRoute';
 import { Request, Response, NextFunction } from 'express';
-
 import { connectDB } from './db';
 
 dotenv.config();

@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+import { Gender } from '../common/types';
 import { validateEmail } from './utils';
-import { Gender } from './types';
 
 const CustomerSchema = new mongoose.Schema({
   first_name: {
@@ -48,6 +48,10 @@ const CustomerSchema = new mongoose.Schema({
       ref: 'transaction',
     },
   ],
+  is_deleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Customer = mongoose.model('customer', CustomerSchema);

@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
 export const EditableCell = ({
@@ -25,5 +26,9 @@ export const EditableCell = ({
     setValue(initialValue);
   }, [initialValue]);
 
-  return <input value={value} onChange={onChange} onBlur={onBlur} />;
+  return (
+    <Tooltip placement="top" title={value}>
+      <input value={value} onChange={onChange} onBlur={onBlur} />
+    </Tooltip>
+  );
 };

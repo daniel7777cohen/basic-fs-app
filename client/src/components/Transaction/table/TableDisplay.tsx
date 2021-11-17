@@ -1,5 +1,7 @@
-import { useTable, usePagination, Column } from 'react-table';
+import { useContext, useEffect } from 'react';
+import { useTable, usePagination, Column, useSortBy } from 'react-table';
 import { TransactionTableData } from '../../../common/types';
+import { TransactionsContext } from '../../../context/Context';
 import { EditableCell } from './EditableCell';
 
 const defaultColumn = {
@@ -11,14 +13,17 @@ export const TableDisplay = ({
   data,
   updateMyData,
   skipPageReset,
-  onCheckboxClick
+  getRowProps,
 }: {
   columns: Column[];
   data: TransactionTableData[];
-  onCheckboxClick:any
+  onCheckboxClick: any;
   updateMyData: any;
   skipPageReset: any;
+  getRowProps: any;
 }) => {
+  const { currentTablePage, setCurrentTablePage } = useContext(TransactionsContext);
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -39,11 +44,27 @@ export const TableDisplay = ({
       columns,
       data,
       defaultColumn,
-      autoResetPage: !skipPageReset,
+      autoResetPage: false,
+      autoResetFilters: false,
+      autoResetSortBy: false,
+      initialState: {
+        sortBy: [
+          {
+            id: 'is_deleted',
+            desc: false,
+          },
+        ],
+        pageIndex: currentTablePage,
+      },
       updateMyData,
     },
+    useSortBy,
     usePagination
   );
+
+  useEffect(() => {
+    setCurrentTablePage(pageIndex);
+  }, [pageIndex, setCurrentTablePage]);
 
   return (
     <>
@@ -61,7 +82,7 @@ export const TableDisplay = ({
           {page.map((row, i) => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr {...row.getRowProps(getRowProps(row))}>
                 {row.cells.map((cell) => {
                   return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>;
                 })}

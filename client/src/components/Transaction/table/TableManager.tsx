@@ -2,17 +2,15 @@ import React, { useContext, useEffect, useState } from 'react';
 import { TableDisplay } from './TableDisplay';
 import { ColumnsProps } from './ColumnsProps';
 import { Container } from './Styles';
-import { Button } from 'antd';
 import { DeleteFilled } from '@ant-design/icons';
 import { TransactionsContext } from '../../../context/Context';
 import { TransactionTableData } from '../../../common/types';
 
 const TableManager = ({ transactionTableData }: { transactionTableData: TransactionTableData[] }) => {
-  const [data, setData] = useState<TransactionTableData[]>(transactionTableData);
-  const [originalData] = useState(transactionTableData);
+  const [data, setData] = useState<TransactionTableData[]>([]);
   const [skipPageReset, setSkipPageReset] = useState(false);
-
   const { deleteTrs, updateTrs } = useContext(TransactionsContext);
+  const [isDeletedFilter, setIsDeletedFilter] = useState(false);
 
   const updateMyData = (rowIndex: number, columnId: any, value: string | number | boolean) => {
     setSkipPageReset(true);
@@ -44,22 +42,36 @@ const TableManager = ({ transactionTableData }: { transactionTableData: Transact
   }, [transactionTableData]);
 
   const onDeleteClick = () => {
-    const rowsToDeleteParams = data
+    const transactionIds = data
       .filter((row) => row.isSelected)
-      .map(({ customer_id, transaction_id }) => {
-        return { customer_id, transaction_id };
+      .map(({ transaction_id }) => {
+        return transaction_id;
       });
-    deleteTrs(rowsToDeleteParams);
+    deleteTrs(transactionIds);
   };
 
-  const resetData = () => setData(originalData);
+  const toggleFilter = (checked: boolean) => {
+    setIsDeletedFilter(checked);
+  };
+
+  useEffect(() => {
+    let filteredData = [...transactionTableData];
+    filteredData = filteredData.filter((row) => row.is_deleted === isDeletedFilter);
+    setData(filteredData);
+  }, [isDeletedFilter, transactionTableData]);
 
   return (
     <div>
-      <span>{`Transactions(${data.length})`}</span>
-      <Button style={{ marginRight: '20px', marginLeft: '20px' }} onClick={resetData}>
-        Reset Data
-      </Button>
+      <div>{`Total Transactions(${transactionTableData.length})`}</div>
+      <span>{`Displayed Transactions(${data.length})`}</span>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        Deleted
+        <input
+          style={{ marginLeft: '8px' }}
+          type="checkbox"
+          onChange={(e) => toggleFilter(e.target.checked)}
+        />
+      </div>
       <DeleteFilled onClick={onDeleteClick} />
       <Container>
         <TableDisplay
@@ -68,6 +80,13 @@ const TableManager = ({ transactionTableData }: { transactionTableData: Transact
           updateMyData={updateMyData}
           onCheckboxClick={onCheckboxClick}
           skipPageReset={skipPageReset}
+          getRowProps={(row: any) => {
+            return {
+              style: {
+                opacity: row.original.is_deleted ? 0.3 : 1,
+              },
+            };
+          }}
         />
       </Container>
     </div>

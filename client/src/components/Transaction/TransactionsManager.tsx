@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import TableManager from './table/TableManager';
-import { translateTrsResponse } from '../utils/transaction-table';
+import { translateTrsResponse } from '../utils/transaction-table-utils';
 import { useContext } from 'react';
 import { TransactionsContext } from '../../context/Context';
+import { Spin } from 'antd';
 
 const Container = styled.div`
   display: flex;
@@ -14,18 +15,20 @@ const Container = styled.div`
 `;
 
 const TransactionsManager = () => {
-  const { transactions } = useContext(TransactionsContext);
-  const hasTransactions = transactions?.length > 0;
+  const { transactions, isLoading } = useContext(TransactionsContext);
 
-  return (
-    <Container>
-      {hasTransactions && (
-        <TableManager
-          transactionTableData={translateTrsResponse(transactions)}
-        />
-      )}
-    </Container>
-  );
+  const hasTransactions = () => {
+    return !isLoading && transactions.length > 0;
+  };
+
+  const renderTransactions = () =>
+    hasTransactions() ? (
+      <TableManager transactionTableData={translateTrsResponse(transactions)} />
+    ) : (
+      <span>No Transactions</span>
+    );
+
+  return <Container>{isLoading ? <Spin size={'large'} /> : renderTransactions()}</Container>;
 };
 
 export default TransactionsManager;
