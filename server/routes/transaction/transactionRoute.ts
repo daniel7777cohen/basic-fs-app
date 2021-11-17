@@ -30,10 +30,11 @@ transactionRouter.post('/', async (req, res) => {
       ...req.body,
     });
 
-    const relatedUser = await Customer.findById(req.body.customer_id).lean();
-    console.log(relatedUser);
     await transaction.save();
 
+    /*
+Todo: fetch related user and return a reponse of one new table ready transaction
+    */
     const transactionsDbResponse = await Transaction.find({})
       .populate({
         path: 'customer_id',
