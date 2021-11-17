@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import Transaction from '../../models/Transaction';
 import Customer from '../../models/Customer';
 import { getProcessedTransactions } from '../utils/transaction-utils';
+
 const transactionRouter = express.Router();
 
 transactionRouter.get('/', async (req: Request, res) => {
@@ -37,22 +38,37 @@ transactionRouter.post('/', async (req, res) => {
   }
 });
 
-transactionRouter.put('/:transaction_id', async (req, res) => {});
-
-transactionRouter.delete('/', async (req, res) => {
+transactionRouter.put('/', async (req, res) => {
   try {
-    /*
-  --validateRequest--
-  *body
-  *params
-  *make sure transaction_id exists at db
-*/
-    await deleteTransactions(req.body.transaction_ids);
-    res.status(200).json({ message: 'success' });
+    await validateUpdateRequest(req, res);
+    const transactionsDbResponse = await getTransactionsByIds(req.body.transaction_ids);
+
+    const { field, newValue } = req.body;
+    const response = await applyTransactionUpdate(transactionsDbResponse, field, newValue);
+    res.status(200).json({ ...response, message: 'success' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
+//@deprecated
+transactionRouter.delete('/', async (req, res) => {
+  try {
+    const response = await deleteTransactions(req.body.transaction_ids);
+    res.status(200).json({ response, message: 'success' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+const deleteTransactions = async (transaction_ids: string[]) => {
+  const response = await Transaction.deleteMany({
+    _id: {
+      $in: transaction_ids,
+    },
+  });
+  return response;
+};
 
 const validateAddTransaction = async (req: Request, res: Response) => {
   //basic validation for request
@@ -71,19 +87,50 @@ const validateAddTransaction = async (req: Request, res: Response) => {
   }
 };
 
-const deleteTransactions = async (transaction_ids: string[]) => {
-  await Transaction.updateMany(
+const validateUpdateRequest = async (req: Request, res: Response) => {
+  if (!req.body) {
+    throw new Error('error- request has no body');
+  }
+
+  const { field, newValue, transaction_ids } = req.body;
+  if (!field || !newValue || !transaction_ids) {
+    throw new Error('error- missing credentials on request');
+  }
+
+  /*
+  field validation - field must be an editable field,
+  transaction_id/credit_card_number for example, is forbidden
+  */
+};
+
+const getTransactionsByIds = async (transaction_ids: string[]) => {
+  const transactions = await Transaction.find({ _id: { $in: transaction_ids } });
+  if (transactions?.length === transaction_ids.length) {
+    return transactions;
+  } else {
+    throw new Error('error finding transactions in db');
+  }
+};
+
+const applyTransactionUpdate = async (
+  transaction_ids: string[],
+  field: string,
+  newValue: string | number
+) => {
+  const updates = {} as { [key: string]: number | string };
+  updates[field] = newValue;
+  const response = await Transaction.updateMany(
     {
       _id: {
         $in: transaction_ids,
       },
     },
     {
-      $set: {
-        is_deleted: true,
-      },
+      $set: updates,
     }
   );
+
+  return response;
 };
 
 export default transactionRouter;

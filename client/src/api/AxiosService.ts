@@ -15,10 +15,12 @@ export class AxiosService {
     return response.data;
   }
 
-  async deleteTransactions(transactionIds: string[]) {
-    const response = await this.axios.delete(`/transaction`, {
-      data: { transaction_ids: transactionIds },
-    });
+  async updateTransactions(params: {
+    transaction_ids: string[];
+    newValue: string | number | boolean;
+    field: string;
+  }) {
+    const response = await this.axios.put(`/transaction`, params);
     return response.data;
   }
 }

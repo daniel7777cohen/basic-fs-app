@@ -34,7 +34,29 @@ export const Container = styled.div`
         border-right: 0;
       }
 
-      :nth-child(9) {
+      :nth-child(2) {
+        //credit card number
+        pointer-events: none;
+      }
+      :nth-child(3) {
+        //credit card number
+        pointer-events: none;
+      }
+      :nth-child(4) {
+        //credit card number
+        pointer-events: none;
+      }
+      :nth-child(5) {
+        //credit card number
+        pointer-events: none;
+      }
+      :nth-child(6) {
+        //credit card number
+        pointer-events: none;
+      }
+    
+      :nth-child(10) {
+        //credit card number
         pointer-events: none;
       }
 

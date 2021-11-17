@@ -1,13 +1,18 @@
 import { createContext, useEffect, useState } from 'react';
 import { AxiosService } from '../api/AxiosService';
-import { Fetched_Transaction, TransactionTableData } from '../common/types';
+import { Fetched_Transaction } from '../common/types';
 
-export type ContextType = {
+type ContextType = {
   transactions: Fetched_Transaction[];
-  isLoading: boolean;
+  isDataLoaded: boolean;
   setTransactions: React.Dispatch<React.SetStateAction<Fetched_Transaction[]>>;
-  updateTrs: (editedRow: TransactionTableData) => Promise<void>;
-  deleteTrs: (transactionIds: string[]) => void;
+  setIsUpdating: React.Dispatch<React.SetStateAction<boolean>>;
+  isUpdating: boolean;
+  updateTrs: (params: {
+    transaction_ids: string[];
+    newValue: string | number | boolean;
+    field: string;
+  }) => Promise<void>;
   addTrs: (addedTrs: Fetched_Transaction) => Promise<void>;
   setCurrentTablePage: React.Dispatch<React.SetStateAction<number>>;
   currentTablePage: number;
@@ -15,10 +20,11 @@ export type ContextType = {
 
 const defaultState = {
   transactions: [] as Fetched_Transaction[],
-  isLoading: false,
+  isDataLoaded: false,
+  isUpdating: true,
   setTransactions: () => {},
+  setIsUpdating: () => {},
   updateTrs: async () => {},
-  deleteTrs: async () => {},
   addTrs: async () => {},
   setCurrentTablePage: () => {},
   currentTablePage: 0,
@@ -30,42 +36,42 @@ const axiosService = new AxiosService(process.env.REACT_APP_BASE_URL);
 
 const TransactionsProvider = ({ children }: { children: any }) => {
   const [transactions, setTransactions] = useState<Fetched_Transaction[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDataLoaded, setIsDataLoaded] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [currentTablePage, setCurrentTablePage] = useState(0);
 
-  const deleteTrs = async (transactionIds: string[]) => {
+  const updateTrs = async (params: {
+    transaction_ids: string[];
+    newValue: string | number | boolean;
+    field: string;
+  }) => {
     try {
-      setIsLoading(true);
-      const response = await axiosService.deleteTransactions(transactionIds);
+      setIsUpdating(true);
+      debugger;
+      const response = await axiosService.updateTransactions(params);
       if (response.message === 'success') {
         const newTransactions = [...transactions];
-        transactionIds.forEach((trsId) => {
-          const transaction = newTransactions.find((trs) => trs.transaction_id === trsId);
-          if (transaction) {
-            transaction.is_deleted = true;
+        for (const trs_id of params.transaction_ids) {
+          const transactionToEditIndex = newTransactions.findIndex((trs) => trs.transaction_id === trs_id);
+          if (transactionToEditIndex !== -1) {
+            // const {  ...rest } = editedRow;
+            newTransactions[transactionToEditIndex] = {
+              ...newTransactions[transactionToEditIndex],
+              [params.field]: params.newValue,
+            };
+
+            setTransactions(newTransactions);
           }
-        });
-        setTransactions(newTransactions);
+        }
+      } else {
+        //handle error
       }
-    } catch (error) {
+    } catch (error: any) {
       //handle error
+      console.log(error.message);
     } finally {
-      setIsLoading(false);
+      setIsUpdating(false);
     }
-  };
-
-  const updateTrs = async (editedRow: TransactionTableData) => {
-    const newTransactions = [...transactions];
-    const transactionToEditIndex = newTransactions.findIndex(
-      (trs) => trs.customer_id === editedRow.customer_id
-    );
-
-    if (transactionToEditIndex !== -1) {
-      const { isSelected, ...rest } = editedRow;
-      newTransactions[transactionToEditIndex] = rest;
-    }
-
-    setTransactions(newTransactions);
   };
 
   const addTrs = async (addedTrs: Fetched_Transaction) => {
@@ -75,13 +81,14 @@ const TransactionsProvider = ({ children }: { children: any }) => {
 
   const useTransactions = {
     transactions,
-    isLoading,
+    isDataLoaded,
     setTransactions,
     updateTrs,
-    deleteTrs,
     addTrs,
     setCurrentTablePage,
     currentTablePage,
+    isUpdating,
+    setIsUpdating,
   };
 
   useEffect(() => {
@@ -93,7 +100,7 @@ const TransactionsProvider = ({ children }: { children: any }) => {
         console.log(error.message);
         //handle error
       } finally {
-        setIsLoading(false);
+        setIsDataLoaded(false);
       }
     }
     fetchTransactions();

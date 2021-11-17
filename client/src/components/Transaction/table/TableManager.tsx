@@ -5,17 +5,23 @@ import { Container } from './Styles';
 import { DeleteFilled } from '@ant-design/icons';
 import { TransactionsContext } from '../../../context/Context';
 import { TransactionTableData } from '../../../common/types';
+import { Spin } from 'antd';
 
 const TableManager = ({ transactionTableData }: { transactionTableData: TransactionTableData[] }) => {
   const [data, setData] = useState<TransactionTableData[]>([]);
   const [skipPageReset, setSkipPageReset] = useState(false);
-  const { deleteTrs, updateTrs } = useContext(TransactionsContext);
+  const { updateTrs, isUpdating } = useContext(TransactionsContext);
   const [isDeletedFilter, setIsDeletedFilter] = useState(false);
 
   const updateMyData = (rowIndex: number, columnId: any, value: string | number | boolean) => {
     setSkipPageReset(true);
-    const editedRow = { ...data[rowIndex], [columnId]: value };
-    updateTrs(editedRow);
+    const { transaction_id } = data[rowIndex];
+    const params = {
+      transaction_ids: [transaction_id],
+      newValue: value,
+      field: columnId,
+    };
+    updateTrs(params);
   };
 
   const onCheckboxClick = (rowIndex: number, columnId: any, value: string | number | boolean) => {
@@ -47,7 +53,13 @@ const TableManager = ({ transactionTableData }: { transactionTableData: Transact
       .map(({ transaction_id }) => {
         return transaction_id;
       });
-    deleteTrs(transactionIds);
+
+    const params = {
+      transaction_ids: transactionIds,
+      newValue: true,
+      field: 'is_deleted',
+    };
+    updateTrs(params);
   };
 
   const toggleFilter = (checked: boolean) => {
@@ -72,7 +84,10 @@ const TableManager = ({ transactionTableData }: { transactionTableData: Transact
           onChange={(e) => toggleFilter(e.target.checked)}
         />
       </div>
-      <DeleteFilled onClick={onDeleteClick} />
+      <div>
+        <DeleteFilled onClick={onDeleteClick} style={{ marginRight: '20px' }} />
+        {isUpdating && <Spin />}
+      </div>
       <Container>
         <TableDisplay
           columns={ColumnsProps(onCheckboxClick)}
