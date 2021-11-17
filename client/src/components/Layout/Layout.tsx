@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import { colors } from '../../common/styles/colors';
+import { TransactionsContext } from '../../context/Context';
 
 interface Props {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ interface Props {
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: center;
   background-color: ${colors.layout};
   height: 100%;
@@ -15,7 +17,16 @@ const Wrapper = styled.div`
 `;
 
 const Layout = ({ children }: Props) => {
-  return <Wrapper>{children}</Wrapper>;
+  const { notification } = useContext(TransactionsContext);
+
+  return (
+    <Wrapper>
+      <>
+        {notification && <div style={{ textAlign: 'center', fontSize: '32px' }}>{notification}</div>}
+        {children}
+      </>
+    </Wrapper>
+  );
 };
 
 export default Layout;

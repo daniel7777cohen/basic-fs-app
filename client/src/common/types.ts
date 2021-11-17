@@ -25,3 +25,11 @@ export type Fetched_Transaction = Transaction & Customer;
 export interface TransactionTableData extends Fetched_Transaction {
   isSelected: boolean;
 }
+
+export interface TransactionForm {
+  total_price: number;
+  currency: string;
+  credit_card_type: string;
+  credit_card_number: number;
+  customer_id: string;
+}

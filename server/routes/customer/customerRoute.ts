@@ -1,9 +1,17 @@
 import express from 'express';
 import Customer from '../../models/Customer';
 import { Request, Response } from 'express';
+
 const customerRouter = express.Router();
 
-customerRouter.get('/', async (req, res) => {});
+customerRouter.get('/', async (req, res) => {
+  try {
+    const customers = await Customer.find({});
+    res.status(200).json({ customers });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 customerRouter.post('/', async (req, res) => {
   try {
@@ -15,9 +23,9 @@ customerRouter.post('/', async (req, res) => {
 
     await customer.save();
 
-    res.status(200).send(customer);
+    res.status(200).json({ customer });
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -36,5 +44,4 @@ function validateRequest(req: Request, res: Response) {
     throw new Error('error- missing credentials on request');
   }
 }
-
 export default customerRouter;

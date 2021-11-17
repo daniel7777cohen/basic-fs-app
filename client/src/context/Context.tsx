@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
 import { AxiosService } from '../api/AxiosService';
-import { Fetched_Transaction } from '../common/types';
+import { Fetched_Transaction, TransactionForm } from '../common/types';
 
 type ContextType = {
   transactions: Fetched_Transaction[];
@@ -13,9 +13,10 @@ type ContextType = {
     newValue: string | number | boolean;
     field: string;
   }) => Promise<void>;
-  addTrs: (addedTrs: Fetched_Transaction) => Promise<void>;
+  addTrs: (addedTransaction: TransactionForm) => Promise<void>;
   setCurrentTablePage: React.Dispatch<React.SetStateAction<number>>;
   currentTablePage: number;
+  notification: string;
 };
 
 const defaultState = {
@@ -28,6 +29,7 @@ const defaultState = {
   addTrs: async () => {},
   setCurrentTablePage: () => {},
   currentTablePage: 0,
+  notification: '',
 };
 
 export const TransactionsContext = createContext<ContextType>(defaultState);
@@ -39,6 +41,7 @@ const TransactionsProvider = ({ children }: { children: any }) => {
   const [isDataLoaded, setIsDataLoaded] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentTablePage, setCurrentTablePage] = useState(0);
+  const [notification, setNotification] = useState('');
 
   const updateTrs = async (params: {
     transaction_ids: string[];
@@ -47,20 +50,19 @@ const TransactionsProvider = ({ children }: { children: any }) => {
   }) => {
     try {
       setIsUpdating(true);
-      debugger;
       const response = await axiosService.updateTransactions(params);
       if (response.message === 'success') {
         const newTransactions = [...transactions];
         for (const trs_id of params.transaction_ids) {
           const transactionToEditIndex = newTransactions.findIndex((trs) => trs.transaction_id === trs_id);
           if (transactionToEditIndex !== -1) {
-            // const {  ...rest } = editedRow;
             newTransactions[transactionToEditIndex] = {
               ...newTransactions[transactionToEditIndex],
               [params.field]: params.newValue,
             };
 
             setTransactions(newTransactions);
+            setNotification('add-success');
           }
         }
       } else {
@@ -74,10 +76,45 @@ const TransactionsProvider = ({ children }: { children: any }) => {
     }
   };
 
-  const addTrs = async (addedTrs: Fetched_Transaction) => {
-    const newTransactions = [...transactions, addedTrs];
-    setTransactions(newTransactions);
+  const addTrs = async (addedTransaction: TransactionForm) => {
+    try {
+      setIsUpdating(true);
+      const response = await axiosService.addTransaction(addedTransaction);
+      debugger;
+      if (response.message === 'success') {
+        setTransactions(response.processedTransactions);
+        setNotification('add-success');
+        setTimeout(() => {
+          setNotification('');
+        }, 5000);
+      } else {
+        //handle error
+      }
+    } catch (error) {
+      //handle error
+    } finally {
+      setIsUpdating(false);
+    }
   };
+
+  useEffect(() => {
+    async function fetchTransactions() {
+      try {
+        const response = await axiosService.fetchTransactions();
+        if (response.message === 'success') {
+          setTransactions(response.processedTransactions);
+        } else {
+          //handle error
+        }
+      } catch (error: any) {
+        console.log(error.message);
+        //handle error
+      } finally {
+        setIsDataLoaded(false);
+      }
+    }
+    fetchTransactions();
+  }, []);
 
   const useTransactions = {
     transactions,
@@ -89,22 +126,8 @@ const TransactionsProvider = ({ children }: { children: any }) => {
     currentTablePage,
     isUpdating,
     setIsUpdating,
+    notification,
   };
-
-  useEffect(() => {
-    async function fetchTransactions() {
-      try {
-        const { processedTransactions } = await axiosService.fetchTransactions();
-        setTransactions(processedTransactions);
-      } catch (error: any) {
-        console.log(error.message);
-        //handle error
-      } finally {
-        setIsDataLoaded(false);
-      }
-    }
-    fetchTransactions();
-  }, []);
 
   return <TransactionsContext.Provider value={useTransactions}>{children}</TransactionsContext.Provider>;
 };

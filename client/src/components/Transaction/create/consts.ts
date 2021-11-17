@@ -107,9 +107,22 @@ export const Currencies = [
 
 export const formDataInitialState = {
   currency: 'Select Currency',
-  total_price: '0',
+  total_price: 0,
   credit_card_type: 'Select Credit Card Type',
-  credit_card_number: '',
+  credit_card_number: 0,
   first_name: 'Select User',
   last_name: '',
+  customer_id: '',
 };
+
+export interface Customer {
+  customer_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  gender: string;
+  country: string;
+  city: string;
+  street: string;
+  phone: string;
+}

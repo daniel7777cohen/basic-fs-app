@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import { TransactionForm } from '../common/types';
 
 export class AxiosService {
   private axios: AxiosInstance;
@@ -21,6 +22,11 @@ export class AxiosService {
     field: string;
   }) {
     const response = await this.axios.put(`/transaction`, params);
+    return response.data;
+  }
+
+  async addTransaction(addedTransaction: TransactionForm) {
+    const response = await this.axios.post(`/transaction`, addedTransaction);
     return response.data;
   }
 }

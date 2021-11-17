@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import Transaction from '../../models/Transaction';
 import Customer from '../../models/Customer';
 import { getProcessedTransactions } from '../utils/transaction-utils';
+import { TransactionsDbResponse } from '../../common/types';
 
 const transactionRouter = express.Router();
 
@@ -16,7 +17,7 @@ transactionRouter.get('/', async (req: Request, res) => {
       .lean();
 
     const processedTransactions = getProcessedTransactions(transactionsDbResponse);
-    return res.status(200).json({ processedTransactions, msg: 'success' });
+    return res.status(200).json({ processedTransactions, message: 'success' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -25,14 +26,24 @@ transactionRouter.get('/', async (req: Request, res) => {
 transactionRouter.post('/', async (req, res) => {
   try {
     await validateAddTransaction(req, res);
-
     const transaction = new Transaction({
       ...req.body,
     });
 
+    const relatedUser = await Customer.findById(req.body.customer_id).lean();
+    console.log(relatedUser);
     await transaction.save();
 
-    res.status(200).json(transaction);
+    const transactionsDbResponse = await Transaction.find({})
+      .populate({
+        path: 'customer_id',
+        select: '-transactions -__v',
+      })
+      .lean();
+
+    const processedTransactions = getProcessedTransactions(transactionsDbResponse);
+
+    return res.status(200).json({ processedTransactions, message: 'success' });
   } catch (error) {
     res.status(500).json(error.message);
   }
@@ -40,8 +51,12 @@ transactionRouter.post('/', async (req, res) => {
 
 transactionRouter.put('/', async (req, res) => {
   try {
-    await validateUpdateRequest(req, res);
+    await validateUpdateParams(req, res);
     const transactionsDbResponse = await getTransactionsByIds(req.body.transaction_ids);
+
+    if (isTransactionDeleted(transactionsDbResponse)) {
+      throw new Error('cannot update deleted transaction. transactions failed');
+    }
 
     const { field, newValue } = req.body;
     const response = await applyTransactionUpdate(transactionsDbResponse, field, newValue);
@@ -78,16 +93,20 @@ const validateAddTransaction = async (req: Request, res: Response) => {
 
   const { customer_id, total_price, currency, credit_card_type, credit_card_number } = req.body;
   if (!customer_id || !total_price || !currency || !credit_card_type || !credit_card_number) {
-    throw new Error('error- missing credentials on request');
+    throw new Error('error- missing credentials on request!!');
   }
 
-  const user = await Customer.findById({ customer_id });
+  const user = await Customer.findById(customer_id);
   if (!user) {
     throw new Error('error- user not found in db');
   }
+
+  if (user.is_deleted) {
+    throw new Error('error- user is not active');
+  }
 };
 
-const validateUpdateRequest = async (req: Request, res: Response) => {
+const validateUpdateParams = async (req: Request, res: Response) => {
   if (!req.body) {
     throw new Error('error- request has no body');
   }
@@ -110,6 +129,10 @@ const getTransactionsByIds = async (transaction_ids: string[]) => {
   } else {
     throw new Error('error finding transactions in db');
   }
+};
+
+const isTransactionDeleted = (transactions: TransactionsDbResponse[]) => {
+  return transactions.some((trs) => trs.is_deleted);
 };
 
 const applyTransactionUpdate = async (

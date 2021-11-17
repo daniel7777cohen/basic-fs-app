@@ -5,19 +5,16 @@ import { CreditCardTypes, Currencies, formDataInitialState } from './consts';
 import { Button } from 'antd';
 import { Container, Form } from './Styles';
 import { TransactionsContext } from '../../../context/Context';
+import { customersMock } from './customers-mock';
 
 const { Option } = Select;
 
-const usersMock = [
-  { id: 1, first_name: 'Bob', last_name: 'Cohen' },
-  { id: 2, first_name: 'Alice', last_name: 'Levi' },
-  { id: 3, first_name: 'Sara', last_name: 'Gur' },
-];
+const usersMock = customersMock.filter(({ is_deleted }) => !is_deleted);
 
 const TransactionCreate = () => {
   const [formData, setFormData] = useState(formDataInitialState);
 
-  const { addTrs, transactions } = useContext(TransactionsContext);
+  const { addTrs, isUpdating } = useContext(TransactionsContext);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -29,13 +26,22 @@ const TransactionCreate = () => {
   };
 
   const handleUserDropDown = (newValue: string) => {
-    const currentUser = usersMock.find((user) => user.id === +newValue);
-    setFormData({ ...formData, first_name: currentUser!.first_name, last_name: currentUser!.last_name });
+    const currentUser = usersMock.find((user) => user._id === newValue);
+
+    if (currentUser) {
+      setFormData({
+        ...formData,
+        customer_id: currentUser._id,
+        first_name: currentUser.first_name,
+        last_name: currentUser.last_name,
+      });
+    }
   };
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
-    // addTrs({ ...transactions[0], ...formData, transaction_id: JSON.stringify(transactions.length + 1) });
+    //validateForm(); make sure fields are valid and not empty
+    await addTrs(formData);
     setFormData(formDataInitialState);
   };
 
@@ -47,7 +53,7 @@ const TransactionCreate = () => {
         onChange={(newValue) => handleUserDropDown(newValue)}
       >
         {usersMock.map((user, i) => (
-          <Option key={i} value={user.id}>
+          <Option key={i} value={user._id}>
             {`${user.first_name} ${user.last_name}`}
           </Option>
         ))}
@@ -81,21 +87,14 @@ const TransactionCreate = () => {
     <Container>
       <Form onSubmit={handleSubmit}>
         {renderDropDowns()}
-        <Input
-          type="text"
-          placeholder="enter a price"
-          onChange={handleInputChange}
-          name="total_price"
-          value={formData['total_price']}
-        />
+        <Input type="text" placeholder="enter a price" onChange={handleInputChange} name="total_price" />
         <Input
           type="text"
           placeholder="enter credit card number"
           onChange={handleInputChange}
           name="credit_card_number"
-          value={formData['credit_card_number']}
         />
-        <Button type="primary" onClick={handleSubmit}>
+        <Button type="primary" onClick={handleSubmit} disabled={isUpdating}>
           Submit
         </Button>
       </Form>
