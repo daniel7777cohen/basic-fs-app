@@ -1,13 +1,15 @@
 import express from 'express';
 import Customer from '../../models/Customer';
 import { Request, Response } from 'express';
+import { getProcessedCustomers } from '../utils/customer-utils';
 
 const customerRouter = express.Router();
 
 customerRouter.get('/', async (req, res) => {
   try {
-    const customers = await Customer.find({});
-    res.status(200).json({ customers });
+    const customers = await Customer.find({}, { is_deleted: false }).lean();
+    const processedCustomers = getProcessedCustomers(customers);
+    res.status(200).json({ processedCustomers, message: 'success' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

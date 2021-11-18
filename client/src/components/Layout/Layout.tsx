@@ -11,6 +11,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   background-color: ${colors.layout};
   height: 100%;
   padding-top: 80px;
@@ -25,10 +26,10 @@ const Layout = ({ children }: Props) => {
         {
           <div
             style={{
-              position: 'absolute',
+              position: 'fixed',
               bottom: 0,
-              top: '40px',
-              left: '40%',
+              top: '60px',
+              left: 'auto',
               fontSize: '32px',
             }}
           >

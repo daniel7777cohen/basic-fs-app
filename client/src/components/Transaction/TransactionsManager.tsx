@@ -15,10 +15,10 @@ const Container = styled.div`
 `;
 
 const TransactionsManager = () => {
-  const { transactions, isDataLoaded } = useContext(TransactionsContext);
+  const { transactions, isTransactionsLoaded } = useContext(TransactionsContext);
 
   const hasTransactions = () => {
-    return !isDataLoaded && transactions.length > 0;
+    return !isTransactionsLoaded && transactions.length > 0;
   };
 
   const renderTransactions = () =>
@@ -28,7 +28,7 @@ const TransactionsManager = () => {
       <span>No Transactions</span>
     );
 
-  return <Container>{isDataLoaded ? <Spin size={'large'} /> : renderTransactions()}</Container>;
+  return <Container>{isTransactionsLoaded ? <Spin size={'large'} /> : renderTransactions()}</Container>;
 };
 
 export default TransactionsManager;

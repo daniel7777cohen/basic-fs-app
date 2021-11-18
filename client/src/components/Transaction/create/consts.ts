@@ -114,15 +114,3 @@ export const formDataInitialState = {
   last_name: '',
   customer_id: '',
 };
-
-export interface Customer {
-  customer_id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  gender: string;
-  country: string;
-  city: string;
-  street: string;
-  phone: string;
-}

@@ -1,73 +1,68 @@
 import { createContext, useEffect, useState } from 'react';
-import { AxiosService } from '../api/AxiosService';
-import { Fetched_Transaction, TransactionForm } from '../common/types';
-
-type ContextType = {
-  transactions: Fetched_Transaction[];
-  isDataLoaded: boolean;
-  setTransactions: React.Dispatch<React.SetStateAction<Fetched_Transaction[]>>;
-  setIsUpdating: React.Dispatch<React.SetStateAction<boolean>>;
-  isUpdating: boolean;
-  updateTrs: (params: {
-    transaction_ids: string[];
-    newValue: string | number | boolean;
-    field: string;
-  }) => Promise<void>;
-  addTrs: (addedTransaction: TransactionForm) => Promise<void>;
-  setCurrentTablePage: React.Dispatch<React.SetStateAction<number>>;
-  currentTablePage: number;
-  notification: string;
-  handleNotification: (message: string, timeout: number) => void;
-};
-
-const defaultState = {
-  transactions: [] as Fetched_Transaction[],
-  isDataLoaded: false,
-  isUpdating: true,
-  setTransactions: () => {},
-  setIsUpdating: () => {},
-  updateTrs: async () => {},
-  addTrs: async () => {},
-  setCurrentTablePage: () => {},
-  currentTablePage: 0,
-  notification: '',
-  handleNotification: () => {},
-};
+import { ApiService } from '../api/AxiosService';
+import { Customer, Fetched_Transaction, TransactionForm } from '../common/types';
+import { defaultState } from './consts';
+import { ContextType, UpdateTrsParams } from './types';
 
 export const TransactionsContext = createContext<ContextType>(defaultState);
 
-const axiosService = new AxiosService(process.env.REACT_APP_BASE_URL);
+const apiService = new ApiService(process.env.REACT_APP_BASE_URL);
 
 const TransactionsProvider = ({ children }: { children: any }) => {
   const [transactions, setTransactions] = useState<Fetched_Transaction[]>([]);
-  const [isDataLoaded, setIsDataLoaded] = useState(true);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [isTransactionsLoaded, setIsTransactionLoaded] = useState(true);
+  const [isCustomersLoaded, setIsCustomersLoaded] = useState(true);
   const [isUpdating, setIsUpdating] = useState(false);
   const [currentTablePage, setCurrentTablePage] = useState(0);
   const [notification, setNotification] = useState('');
 
-  const updateTrs = async (params: {
-    transaction_ids: string[];
-    newValue: string | number | boolean;
-    field: string;
-  }) => {
+  useEffect(() => {
+    async function fetchTransactions() {
+      try {
+        const response = await apiService.fetchTransactions();
+        if (response.message === 'success') {
+          setTransactions(response.processedTransactions);
+        } else {
+          //handle error
+          handleNotification(`Error - please try again, or contact support`, 3500);
+        }
+      } catch (error: any) {
+        //handle error
+        handleNotification(`${error.message}`, 3500);
+      } finally {
+        setIsTransactionLoaded(false);
+      }
+    }
+    fetchTransactions();
+  }, []);
+
+  useEffect(() => {
+    async function fetchCustomers() {
+      try {
+        const response = await apiService.fetchCustomers();
+        if (response.message === 'success') {
+          setCustomers(response.processedCustomers);
+        } else {
+          //handle error
+          handleNotification(`Error - please try again, or contact support`, 3500);
+        }
+      } catch (error: any) {
+        //handle error
+        handleNotification(`${error.message}`, 3500);
+      } finally {
+        setIsCustomersLoaded(false);
+      }
+    }
+    fetchCustomers();
+  }, []);
+
+  const updateTrs = async ({ transaction_ids, newValue, field }: UpdateTrsParams) => {
     try {
       setIsUpdating(true);
-      const response = await axiosService.updateTransactions(params);
+      const response = await apiService.updateTransactions({ transaction_ids, newValue, field });
       if (response.message === 'success') {
-        const newTransactions = [...transactions];
-        for (const trs_id of params.transaction_ids) {
-          const transactionToEditIndex = newTransactions.findIndex((trs) => trs.transaction_id === trs_id);
-          if (transactionToEditIndex !== -1) {
-            newTransactions[transactionToEditIndex] = {
-              ...newTransactions[transactionToEditIndex],
-              [params.field]: params.newValue,
-            };
-
-            setTransactions(newTransactions);
-            const action = params.field === 'is_deleted' ? 'deleted' : 'updated';
-            handleNotification(`Transaction ${action} successfully`, 3500);
-          }
-        }
+        updateUiOnSuccess({ transaction_ids, newValue, field });
       } else {
         handleNotification(`Error - please try again, or contact support`, 3500);
       }
@@ -82,8 +77,7 @@ const TransactionsProvider = ({ children }: { children: any }) => {
   const addTrs = async (addedTransaction: TransactionForm) => {
     try {
       setIsUpdating(true);
-      const response = await axiosService.addTransaction(addedTransaction);
-      debugger;
+      const response = await apiService.addTransaction(addedTransaction);
       if (response.message === 'success') {
         setTransactions((prev) => [...prev, ...response.processedTransaction]);
         handleNotification('Transaction added successfully', 3500);
@@ -105,29 +99,32 @@ const TransactionsProvider = ({ children }: { children: any }) => {
     }, timeout);
   };
 
-  useEffect(() => {
-    async function fetchTransactions() {
-      try {
-        const response = await axiosService.fetchTransactions();
-        if (response.message === 'success') {
-          setTransactions(response.processedTransactions);
-        } else {
-          //handle error
-          handleNotification(`Error - please try again, or contact support`, 3500);
-        }
-      } catch (error: any) {
-        //handle error
-        handleNotification(`${error.message}`, 3500);
-      } finally {
-        setIsDataLoaded(false);
+  const updateUiOnSuccess = ({ transaction_ids, newValue, field }: UpdateTrsParams) => {
+    const newTransactions = [...transactions];
+    for (const trs_id of transaction_ids) {
+      const transactionToEditIndex = newTransactions.findIndex((trs) => trs.transaction_id === trs_id);
+      if (transactionToEditIndex !== -1) {
+        newTransactions[transactionToEditIndex] = {
+          ...newTransactions[transactionToEditIndex],
+          [field]: newValue,
+        };
+
+        setTransactions(newTransactions);
+        const action = field === 'is_deleted' ? 'deleted' : 'updated';
+        handleNotification(
+          `${transaction_ids.length > 1 ? 'Transactions' : 'Transaction'} ${action} successfully`,
+          3500
+        );
       }
     }
-    fetchTransactions();
-  }, []);
+  };
 
   const useTransactions = {
     transactions,
-    isDataLoaded,
+    customers,
+    isTransactionsLoaded,
+    isCustomersLoaded,
+    setIsTransactionLoaded,
     setTransactions,
     updateTrs,
     addTrs,

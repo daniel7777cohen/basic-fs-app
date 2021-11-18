@@ -36,13 +36,13 @@ export const EditableCell = ({
     e.preventDefault();
 
     if (excludedUserFields.includes(id)) {
-      handleNotification(`Unable to edit customer field.`, 3500);
+      handleNotification(`Error - Customer fields editing is forbidden at this page.`, 3500);
       return undefined;
     }
 
     if (excludedTrsFields.includes(id)) {
       //Todo: add a more descriptive notficitation
-      handleNotification(`Unable to edit current field.`, 3500);
+      handleNotification(`Error - editting the current transaction field is forbidden.`, 3500);
       return undefined;
     }
     return onChange(e);
