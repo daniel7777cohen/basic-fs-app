@@ -90,7 +90,7 @@ export const TableDisplay = ({
           })}
         </tbody>
       </table>
-      <div className="pagination">
+      <div className="pagination" style={{marginTop:'auto'}}>
         <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
           {'<<'}
         </button>{' '}

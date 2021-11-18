@@ -13,7 +13,7 @@ const Wrapper = styled.div`
   justify-content: center;
   background-color: ${colors.layout};
   height: 100%;
-  padding: 20px 0;
+  padding-top: 80px;
 `;
 
 const Layout = ({ children }: Props) => {

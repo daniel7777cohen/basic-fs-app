@@ -85,7 +85,7 @@ const TransactionsProvider = ({ children }: { children: any }) => {
       const response = await axiosService.addTransaction(addedTransaction);
       debugger;
       if (response.message === 'success') {
-        setTransactions(response.processedTransactions);
+        setTransactions((prev) => [...prev, ...response.processedTransaction]);
         handleNotification('Transaction added successfully', 3500);
       } else {
         //handle error

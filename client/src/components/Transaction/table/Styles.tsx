@@ -2,14 +2,17 @@ import styled from 'styled-components';
 import { colors } from '../../../common/styles/colors';
 
 export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
   max-width: 1650px;
   margin-top: 20px;
+  overflow: scroll;
+  min-height: 518px;
 
   @media screen and (max-width: 1500px) {
     max-width: 1375px;
   }
 
-  overflow: scroll;
   box-shadow: 0px 3px 15px 8px rgb(0 0 0 / 50%);
   table {
     background-color: ${colors.white};

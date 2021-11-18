@@ -32,19 +32,16 @@ transactionRouter.post('/', async (req, res) => {
 
     await transaction.save();
 
-    /*
-Todo: fetch related user and return a reponse of one new table ready transaction
-    */
-    const transactionsDbResponse = await Transaction.find({})
+    const populatedTransaction = await Transaction.findById(transaction._id)
       .populate({
         path: 'customer_id',
         select: '-transactions -__v',
       })
       .lean();
 
-    const processedTransactions = getProcessedTransactions(transactionsDbResponse);
+    const processedTransaction = getProcessedTransactions([populatedTransaction]);
 
-    return res.status(200).json({ processedTransactions, message: 'success' });
+    return res.status(200).json({ processedTransaction, message: 'success' });
   } catch (error) {
     res.status(500).json(error.message);
   }
@@ -60,12 +57,12 @@ transactionRouter.put('/', async (req, res) => {
     }
 
     const { field, newValue } = req.body;
-    const response = await applyTransactionUpdate(transactionsDbResponse, field, newValue);
-    if (!response.acknowledged) {
+    const updatedTransactions = await applyTransactionUpdate(transactionsDbResponse, field, newValue);
+    if (!updatedTransactions.acknowledged) {
       throw new Error(`Error - unable to set ${newValue}`);
     }
-    
-    res.status(200).json({ ...response, message: 'success' });
+
+    res.status(200).json({ ...updatedTransactions, message: 'success' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

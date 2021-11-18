@@ -14,7 +14,7 @@ const usersMock = customersMock.filter(({ is_deleted }) => !is_deleted);
 const TransactionCreate = () => {
   const [formData, setFormData] = useState(formDataInitialState);
 
-  const { addTrs, isUpdating } = useContext(TransactionsContext);
+  const { addTrs, isUpdating, handleNotification } = useContext(TransactionsContext);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -41,6 +41,27 @@ const TransactionCreate = () => {
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     //validateForm(); make sure fields are valid and not empty
+    const {
+      credit_card_number,
+      currency,
+      customer_id,
+      last_name,
+      total_price,
+      first_name,
+      credit_card_type,
+    } = formData;
+    if (
+      !credit_card_number ||
+      !currency ||
+      !customer_id ||
+      !last_name ||
+      !total_price ||
+      !first_name ||
+      !credit_card_type
+    ) {
+      handleNotification('Please fill in the form', 3500);
+      return;
+    }
     await addTrs(formData);
     setFormData(formDataInitialState);
   };
@@ -87,8 +108,15 @@ const TransactionCreate = () => {
     <Container>
       <Form onSubmit={handleSubmit}>
         {renderDropDowns()}
-        <Input type="text" placeholder="enter a price" onChange={handleInputChange} name="total_price" />
         <Input
+          required
+          type="text"
+          placeholder="enter a price"
+          onChange={handleInputChange}
+          name="total_price"
+        />
+        <Input
+          required
           type="text"
           placeholder="enter credit card number"
           onChange={handleInputChange}

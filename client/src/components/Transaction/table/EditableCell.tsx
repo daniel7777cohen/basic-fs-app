@@ -34,7 +34,6 @@ export const EditableCell = ({
 
   const isOnchangeValid = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    debugger;
 
     if (excludedUserFields.includes(id)) {
       handleNotification(`Unable to edit customer field.`, 3500);

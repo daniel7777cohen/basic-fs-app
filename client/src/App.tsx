@@ -4,6 +4,12 @@ import TransactionRouter from './routes/TransactionsRouter';
 import Layout from './components/Layout/Layout';
 import NavBar from './components/NavBar/NavBar';
 import TransactionsProvider from './context/Context';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  height: 100%;
+  position: relative;
+`;
 
 const App = () => {
   return (
@@ -11,14 +17,14 @@ const App = () => {
       <TransactionsProvider>
         <Router>
           <NavBar />
-          <div style={{ position: 'relative' }}>
+          <Wrapper>
             <Layout>
               <Switch>
                 <Route path="/transactions" component={TransactionRouter} />
                 <Redirect from="*" to="/transactions" />
               </Switch>
             </Layout>
-          </div>
+          </Wrapper>
         </Router>
       </TransactionsProvider>
     </>
