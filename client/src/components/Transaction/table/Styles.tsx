@@ -25,39 +25,13 @@ export const Container = styled.div`
     th,
     td {
       margin: 0;
-      padding: 0.5rem;
+      padding: 8px;
       border-bottom: 1px solid black;
       border-right: 1px solid black;
       max-width: 200px;
 
       :last-child {
         border-right: 0;
-      }
-
-      :nth-child(2) {
-        //credit card number
-        pointer-events: none;
-      }
-      :nth-child(3) {
-        //credit card number
-        pointer-events: none;
-      }
-      :nth-child(4) {
-        //credit card number
-        pointer-events: none;
-      }
-      :nth-child(5) {
-        //credit card number
-        pointer-events: none;
-      }
-      :nth-child(6) {
-        //credit card number
-        pointer-events: none;
-      }
-    
-      :nth-child(10) {
-        //credit card number
-        pointer-events: none;
       }
 
       input {
