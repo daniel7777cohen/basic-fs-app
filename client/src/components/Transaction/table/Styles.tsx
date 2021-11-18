@@ -8,12 +8,13 @@ export const Container = styled.div`
   margin-top: 20px;
   overflow: scroll;
   min-height: 518px;
+  box-shadow: 0px 3px 15px 8px rgb(0 0 0 / 50%);
+  background-color: white;
 
   @media screen and (max-width: 1500px) {
     max-width: 1375px;
   }
 
-  box-shadow: 0px 3px 15px 8px rgb(0 0 0 / 50%);
   table {
     background-color: ${colors.white};
     border: 1px solid black;

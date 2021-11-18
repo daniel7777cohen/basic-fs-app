@@ -7,8 +7,9 @@ import TransactionsProvider from './context/Context';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
+  background-color: #d8d8d8;
   height: 100%;
-  position: relative;
+  width:100%;
 `;
 
 const App = () => {

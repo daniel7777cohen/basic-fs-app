@@ -90,7 +90,7 @@ const TableManager = ({ transactionTableData }: { transactionTableData: Transact
           getRowProps={(row: any) => {
             return {
               style: {
-                opacity: row.original.is_deleted ? 0.3 : 1,
+                opacity: row.original.is_deleted ? 0.6 : 1,
               },
             };
           }}
