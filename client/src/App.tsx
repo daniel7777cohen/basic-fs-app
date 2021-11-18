@@ -11,12 +11,14 @@ const App = () => {
       <TransactionsProvider>
         <Router>
           <NavBar />
-          <Layout>
-            <Switch>
-              <Route path="/transactions" component={TransactionRouter} />
-              <Redirect from="*" to="/transactions" />
-            </Switch>
-          </Layout>
+          <div style={{ position: 'relative' }}>
+            <Layout>
+              <Switch>
+                <Route path="/transactions" component={TransactionRouter} />
+                <Redirect from="*" to="/transactions" />
+              </Switch>
+            </Layout>
+          </div>
         </Router>
       </TransactionsProvider>
     </>

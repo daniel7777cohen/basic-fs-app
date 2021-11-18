@@ -9,23 +9,20 @@ import { Spin } from 'antd';
 
 const TableManager = ({ transactionTableData }: { transactionTableData: TransactionTableData[] }) => {
   const [data, setData] = useState<TransactionTableData[]>([]);
-  const [skipPageReset, setSkipPageReset] = useState(false);
   const { updateTrs, isUpdating } = useContext(TransactionsContext);
   const [isDeletedFilter, setIsDeletedFilter] = useState(false);
 
-  const updateMyData = (rowIndex: number, columnId: any, value: string | number | boolean) => {
-    setSkipPageReset(true);
+  const onTableFieldChange = (rowIndex: number, field_name: string, value: string | number | boolean) => {
     const { transaction_id } = data[rowIndex];
     const params = {
       transaction_ids: [transaction_id],
       newValue: value,
-      field: columnId,
+      field: field_name,
     };
     updateTrs(params);
   };
 
   const onCheckboxClick = (rowIndex: number, columnId: any, value: string | number | boolean) => {
-    setSkipPageReset(true);
     setData((old: TransactionTableData[]) =>
       old.map((row: TransactionTableData, index: number) => {
         if (index === rowIndex) {
@@ -38,10 +35,6 @@ const TableManager = ({ transactionTableData }: { transactionTableData: Transact
       })
     );
   };
-
-  useEffect(() => {
-    setSkipPageReset(false);
-  }, [data]);
 
   useEffect(() => {
     setData(transactionTableData);
@@ -84,7 +77,7 @@ const TableManager = ({ transactionTableData }: { transactionTableData: Transact
           onChange={(e) => toggleFilter(e.target.checked)}
         />
       </div>
-      <div>
+      <div style={{ display: 'flex', minHeight: '30px' }}>
         <DeleteFilled onClick={onDeleteClick} style={{ marginRight: '20px' }} />
         {isUpdating && <Spin />}
       </div>
@@ -92,9 +85,8 @@ const TableManager = ({ transactionTableData }: { transactionTableData: Transact
         <TableDisplay
           columns={ColumnsProps(onCheckboxClick)}
           data={data}
-          updateMyData={updateMyData}
+          onTableFieldChange={onTableFieldChange}
           onCheckboxClick={onCheckboxClick}
-          skipPageReset={skipPageReset}
           getRowProps={(row: any) => {
             return {
               style: {

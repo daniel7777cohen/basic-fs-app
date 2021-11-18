@@ -11,15 +11,14 @@ const defaultColumn = {
 export const TableDisplay = ({
   columns,
   data,
-  updateMyData,
-  skipPageReset,
+  onTableFieldChange,
+
   getRowProps,
 }: {
   columns: Column[];
   data: TransactionTableData[];
   onCheckboxClick: any;
-  updateMyData: any;
-  skipPageReset: any;
+  onTableFieldChange: (rowIndex: number, field_name: string, value: string | number | boolean) => void;
   getRowProps: any;
 }) => {
   const { currentTablePage, setCurrentTablePage } = useContext(TransactionsContext);
@@ -56,7 +55,7 @@ export const TableDisplay = ({
         ],
         pageIndex: currentTablePage,
       },
-      updateMyData,
+      onTableFieldChange,
     },
     useSortBy,
     usePagination

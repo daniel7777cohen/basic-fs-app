@@ -22,7 +22,19 @@ const Layout = ({ children }: Props) => {
   return (
     <Wrapper>
       <>
-        {notification && <div style={{ textAlign: 'center', fontSize: '32px' }}>{notification}</div>}
+        {
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              top: '40px',
+              left: '40%',
+              fontSize: '32px',
+            }}
+          >
+            {notification}
+          </div>
+        }
         {children}
       </>
     </Wrapper>
