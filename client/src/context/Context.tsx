@@ -17,6 +17,7 @@ type ContextType = {
   setCurrentTablePage: React.Dispatch<React.SetStateAction<number>>;
   currentTablePage: number;
   notification: string;
+  handleNotification: (message: string, timeout: number) => void;
 };
 
 const defaultState = {
@@ -30,6 +31,7 @@ const defaultState = {
   setCurrentTablePage: () => {},
   currentTablePage: 0,
   notification: '',
+  handleNotification: () => {},
 };
 
 export const TransactionsContext = createContext<ContextType>(defaultState);
@@ -62,15 +64,16 @@ const TransactionsProvider = ({ children }: { children: any }) => {
             };
 
             setTransactions(newTransactions);
-            setNotification('add-success');
+            const action = params.field === 'is_deleted' ? 'deleted' : 'updated';
+            handleNotification(`Transaction ${action} successfully`, 3500);
           }
         }
       } else {
-        //handle error
+        handleNotification(`Error - please try again, or contact support`, 3500);
       }
     } catch (error: any) {
       //handle error
-      console.log(error.message);
+      handleNotification(`${error.message}`, 3500);
     } finally {
       setIsUpdating(false);
     }
@@ -83,18 +86,23 @@ const TransactionsProvider = ({ children }: { children: any }) => {
       debugger;
       if (response.message === 'success') {
         setTransactions(response.processedTransactions);
-        setNotification('add-success');
-        setTimeout(() => {
-          setNotification('');
-        }, 5000);
+        handleNotification('Transaction added successfully', 3500);
       } else {
         //handle error
+        handleNotification(`Error - please try again, or contact support`, 3500);
       }
-    } catch (error) {
-      //handle error
+    } catch (error: any) {
+      handleNotification(error.message, 3500);
     } finally {
       setIsUpdating(false);
     }
+  };
+
+  const handleNotification = (message: string, timeout: number) => {
+    setNotification(message);
+    setTimeout(() => {
+      setNotification('');
+    }, timeout);
   };
 
   useEffect(() => {
@@ -105,10 +113,11 @@ const TransactionsProvider = ({ children }: { children: any }) => {
           setTransactions(response.processedTransactions);
         } else {
           //handle error
+          handleNotification(`Error - please try again, or contact support`, 3500);
         }
       } catch (error: any) {
-        console.log(error.message);
         //handle error
+        handleNotification(`${error.message}`, 3500);
       } finally {
         setIsDataLoaded(false);
       }
@@ -127,6 +136,7 @@ const TransactionsProvider = ({ children }: { children: any }) => {
     isUpdating,
     setIsUpdating,
     notification,
+    handleNotification,
   };
 
   return <TransactionsContext.Provider value={useTransactions}>{children}</TransactionsContext.Provider>;
