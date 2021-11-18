@@ -55,12 +55,16 @@ transactionRouter.put('/', async (req, res) => {
     await validateUpdateParams(req, res);
     const transactionsDbResponse = await getTransactionsByIds(req.body.transaction_ids);
 
-    if (isTransactionDeleted(transactionsDbResponse)) {
+    if (hasDeletedTransaction(transactionsDbResponse)) {
       throw new Error('cannot update deleted transaction. transactions failed');
     }
 
     const { field, newValue } = req.body;
     const response = await applyTransactionUpdate(transactionsDbResponse, field, newValue);
+    if (!response.acknowledged) {
+      throw new Error(`Error - unable to set ${newValue}`);
+    }
+    
     res.status(200).json({ ...response, message: 'success' });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -132,7 +136,7 @@ const getTransactionsByIds = async (transaction_ids: string[]) => {
   }
 };
 
-const isTransactionDeleted = (transactions: TransactionsDbResponse[]) => {
+const hasDeletedTransaction = (transactions: TransactionsDbResponse[]) => {
   return transactions.some((trs) => trs.is_deleted);
 };
 
