@@ -78,6 +78,7 @@ transactionRouter.delete('/', async (req, res) => {
   }
 });
 
+//@deprecated
 const deleteTransactions = async (transaction_ids: string[]) => {
   const response = await Transaction.deleteMany({
     _id: {
