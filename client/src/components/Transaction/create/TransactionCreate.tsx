@@ -98,6 +98,7 @@ const TransactionCreate = () => {
             placeholder="enter a price"
             onChange={handleInputChange}
             name="total_price"
+            value={formData['total_price']}
           />
           <Input
             required
@@ -105,6 +106,8 @@ const TransactionCreate = () => {
             placeholder="enter credit card number"
             onChange={handleInputChange}
             name="credit_card_number"
+            value={formData['credit_card_number']}
+
           />
           <Button type="primary" onClick={handleSubmit} disabled={isUpdating}>
             Submit
